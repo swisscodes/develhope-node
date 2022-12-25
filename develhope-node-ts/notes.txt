@@ -1,0 +1,3 @@
+to use source map to map errors to typescript file and line number
+first we need to enable the sourceMap in the ts config
+then we need to use node --enable-source-maps dist/server.js
