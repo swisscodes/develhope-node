@@ -5,6 +5,7 @@
       "lib": [
         "es2022"
       ],
+      "resolveJsonModule": true,
       "outDir": "./dist",
       "module": "NodeNext",
       "target": "es2022",
