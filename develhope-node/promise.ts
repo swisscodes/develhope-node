@@ -13,13 +13,9 @@ function luckyDraw(player: string) {
 }
 
 luckyDraw('Joe')
-  .then((data) => {
-    console.log(data);
-    luckyDraw('Caroline').then((data) => {
-      console.log(data);
-      luckyDraw('Sabrina').then((data) => {
-        console.log(data);
-      });
-    });
-  })
+  .then((data) => console.log(data))
+  .then(() => luckyDraw('Caroline').then((data) => console.log(data)))
+  .then(() => luckyDraw('Sabrina').then((data) => console.log(data)))
   .catch((e) => console.log(e));
+
+export default luckyDraw;
