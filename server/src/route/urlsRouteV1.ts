@@ -1,14 +1,14 @@
 import { Router } from "express";
+import planetsRoute from "../planets/planetsRoute";
 
-//@ts-ignore
 const router = Router();
 
-//@ts-ignore
 function urlsRouteV1(mainRoute: Router) {
-    //@ts-ignore
-    mainRoute.get("/", (req, res) =>
+    mainRoute.use("/", router);
+    router.get("/", (req, res) =>
         res.status(200).json({ msg: "Hello Develhope" })
     );
+    planetsRoute(router);
 }
 
 export default urlsRouteV1;
