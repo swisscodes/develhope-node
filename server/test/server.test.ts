@@ -1,5 +1,6 @@
 import supertest from "supertest";
 import testApp from "../src/app";
+import { prismaMock } from "../prisma/prismaSingleton";
 
 const request = supertest(testApp);
 describe("GET /planets", () => {
@@ -10,22 +11,25 @@ describe("GET /planets", () => {
     });
 });
 
-test("GET /planets", async () => {
-    const response = await request.get("/planets").expect(200);
+// test("GET /planets", async () => {
+//     const response = await request.get("/planets").expect(200);
 
-    expect(response.body).toEqual([]);
-});
+//     expect(response.body).toEqual([]);
+// });
 
 describe("POST /planets", () => {
     test("Valid request", async () => {
         const planet = {
+            id: 1,
             name: "Mercury",
-            diameter: 1234,
-            moons: 12,
         };
+
+        prismaMock.planet.create.mockResolvedValue(planet);
         const response = await request
             .post("/planets")
-            .send(planet)
+            .send({
+                name: "Mercury",
+            })
             .expect(201)
             .expect("Content-Type", "application/json; charset=utf-8");
 

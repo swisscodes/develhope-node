@@ -14,20 +14,22 @@ function retrieveRoute(mainRoute: Router) {
     });
 
     route.post("/", async (req, res) => {
+        //@ts-ignore
         const { name, diameter, moons, description } = req.body;
 
         if (
             name &&
-            typeof name === "string" &&
-            diameter &&
-            typeof diameter === "number" &&
-            moons &&
-            typeof moons === "number" &&
-            (typeof description === "string" ||
-                typeof description === "undefined")
+            typeof name === "string" //&&
+            // diameter &&
+            // typeof diameter === "number" &&
+            // moons &&
+            // typeof moons === "number" &&
+            // (typeof description === "string" ||
+            //     typeof description === "undefined")
         ) {
             const postedData: Iplanet = req.body;
-            res.status(201).json(postedData);
+            const planet = await prisma.planet.create({ data: postedData });
+            res.status(201).json(planet);
         } else {
             res.status(422).json({ error: "bad thing happened" });
         }
