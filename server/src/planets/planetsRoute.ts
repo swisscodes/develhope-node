@@ -12,6 +12,18 @@ function retrieveRoute(mainRoute: Router) {
 
         res.status(200).json(result);
     });
+    route.get("/:id(\\d+)", async (req, res) => {
+        const planetId = Number(req.params.id);
+        const result = await prisma.planet.findUnique({
+            where: { id: planetId },
+        });
+
+        if (result) {
+            res.status(200).json(result);
+        } else {
+            res.status(404).json({ error: "bad thing happened" });
+        }
+    });
 
     route.post("/", async (req, res) => {
         //@ts-ignore
@@ -31,6 +43,36 @@ function retrieveRoute(mainRoute: Router) {
             const planet = await prisma.planet.create({ data: postedData });
             res.status(201).json(planet);
         } else {
+            res.status(422).json({
+                error: "bad thing happened no panick send the right data type",
+            });
+        }
+    });
+
+    route.put("/:id(\\d+)", async (req, res) => {
+        const planetId = Number(req.params.id);
+        const bodyData = req.body;
+
+        try {
+            const result = await prisma.planet.update({
+                where: { id: planetId },
+                data: bodyData,
+            });
+            res.status(200).json(result);
+        } catch (e) {
+            res.status(422).json({ error: "bad thing happened" });
+        }
+    });
+
+    route.delete("/:id(\\d+)", async (req, res) => {
+        const planetId = Number(req.params.id);
+
+        try {
+            const result = await prisma.planet.delete({
+                where: { id: planetId },
+            });
+            res.status(200).json(result);
+        } catch (e) {
             res.status(422).json({ error: "bad thing happened" });
         }
     });

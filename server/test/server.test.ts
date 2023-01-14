@@ -3,7 +3,7 @@ import testApp from "../src/app";
 import { prismaMock } from "../prisma/prismaSingleton";
 
 const request = supertest(testApp);
-describe("GET /planets", () => {
+describe("GET /", () => {
     test("GET /", async () => {
         const response = await request.get("/").expect(200);
 
@@ -20,7 +20,7 @@ describe("GET /planets", () => {
 describe("POST /planets", () => {
     test("Valid request", async () => {
         const planet = {
-            id: 1,
+            id: 33,
             name: "Mercury",
         };
 
@@ -44,6 +44,113 @@ describe("POST /planets", () => {
         const response = await request
             .post("/planets")
             .send(planet)
+            .expect(422)
+            .expect("Content-Type", "application/json; charset=utf-8");
+
+        expect(response.body).toEqual({
+            error: "bad thing happened no panick send the right data type",
+        });
+    });
+});
+
+describe("POST /planets/:id", () => {
+    test("Valid request", async () => {
+        const planet = {
+            id: 1,
+            name: "Mercury",
+        };
+
+        prismaMock.planet.findUnique.mockResolvedValue(planet);
+        const response = await request
+            .get("/planets/1")
+            .send({
+                id: 1,
+                name: "Mercury",
+            })
+            .expect(200)
+            .expect("Content-Type", "application/json; charset=utf-8");
+
+        expect(response.body).toEqual(planet);
+    });
+
+    test("invalid request", async () => {
+        prismaMock.planet.findUnique.mockResolvedValue(null);
+        const response = await request
+            .get("/planets/999")
+            .send({
+                id: 1,
+                name: "Mercury",
+            })
+            .expect(404)
+            .expect("Content-Type", "application/json; charset=utf-8");
+
+        expect(response.body).toEqual({ error: "bad thing happened" });
+    });
+});
+
+describe("PUT /planets/:id", () => {
+    test("Valid request", async () => {
+        const planet = {
+            id: 1,
+            name: "Mercury",
+        };
+
+        prismaMock.planet.update.mockResolvedValue(planet);
+        const response = await request
+            .put("/planets/1")
+            .send({
+                id: 1,
+                name: "Mercury",
+            })
+            .expect(200)
+            .expect("Content-Type", "application/json; charset=utf-8");
+
+        expect(response.body).toEqual(planet);
+    });
+
+    test("invalid request", async () => {
+        prismaMock.planet.findUnique.mockResolvedValue(null);
+        const response = await request
+            .put("/planets/999")
+            .send({
+                id: 1,
+                name: "Mercury",
+            })
+            .expect(422)
+            .expect("Content-Type", "application/json; charset=utf-8");
+
+        expect(response.body).toEqual({ error: "bad thing happened" });
+    });
+});
+
+describe("DELETE /planets/:id", () => {
+    test("Valid request", async () => {
+        const planet = {
+            id: 1,
+            name: "Mercury",
+        };
+
+        prismaMock.planet.update.mockResolvedValue(planet);
+        const response = await request
+            .put("/planets/1")
+            .send({
+                id: 1,
+                name: "Mercury",
+            })
+            .expect(200)
+            .expect("Content-Type", "application/json; charset=utf-8");
+
+        expect(response.body).toEqual(planet);
+    });
+
+    test("invalid request", async () => {
+        prismaMock.planet.findUnique.mockResolvedValue(null);
+        const response = await request
+            .put("/planets/999")
+            .send({
+                id: 1,
+                name: "Mercury",
+            })
             .expect(422)
             .expect("Content-Type", "application/json; charset=utf-8");
 
