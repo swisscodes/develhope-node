@@ -7,11 +7,7 @@ const router = express.Router();
 
 const app = express();
 app.use(express.json());
-app.use(
-    cors({
-        origin: "http://localhost:8000",
-    })
-);
+app.use(cors());
 app.use("/", router);
 
 urlsRouteV1(router);

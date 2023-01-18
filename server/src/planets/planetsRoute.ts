@@ -1,11 +1,13 @@
 import { Router } from "express";
 import { PrismaClient } from "@prisma/client";
 import { Iplanet } from "./planetTypes";
+import { initMulterMiddleware } from "../middleware/multer";
 
 const route = Router();
 const prisma = new PrismaClient();
+const upload = initMulterMiddleware();
 
-function retrieveRoute(mainRoute: Router) {
+function planetsRoute(mainRoute: Router) {
     mainRoute.use("/planets", route);
     route.get("/", async (req, res) => {
         const result = await prisma.planet.findMany();
@@ -76,6 +78,16 @@ function retrieveRoute(mainRoute: Router) {
             res.status(422).json({ error: "bad thing happened" });
         }
     });
+
+    //upload
+    route.post("/:id(\\d+)/photo", upload.single("photo"), async (req, res) => {
+        if (!req.file) {
+            res.status(400);
+        }
+        const uploadFilename = req.file?.filename;
+
+        res.status(201).json({ uploadFilename });
+    });
 }
 
-export default retrieveRoute;
+export default planetsRoute;
